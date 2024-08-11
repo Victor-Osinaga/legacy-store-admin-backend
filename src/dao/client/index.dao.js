@@ -7,14 +7,14 @@ switch (config.env) {
     case 'dev':
         console.log("modo dev");
         
-        const { default: ClientProdDAO } = await import('./ClientProd.dao.js')
-        clientDao = new ClientProdDAO('clients', clientSquema, config.dev_url_database)
+        const { default: ClientDevDAO } = await import('./ClientDev.dao.js')
+        clientDao = new ClientDevDAO('clients', clientSquema, config.dev_url_database)
         break;
 
     default:
         console.log("modo prod");
-        const { default: ClientDevDAO } = await import('./ClientDev.dao.js')
-        clientDao = new ClientDevDAO('clients', clientSquema, config.prod_url_database)
+        const { default: ClientProdDAO } = await import('./ClientProd.dao.js')
+        clientDao = new ClientProdDAO('clients', clientSquema, config.prod_url_database)
         break;
 }
 
