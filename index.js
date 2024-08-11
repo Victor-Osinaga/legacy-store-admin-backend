@@ -2,7 +2,7 @@
 import config from './config.js';
 import {app} from './app.js'
 
-const PORT = config.PORT || 8080
+const PORT = config.PORT || 2021
 
 const connectServer = app.listen(PORT, ()=> {
     console.log(`Servidor escuchando en el puerto ${connectServer.address().port}`);

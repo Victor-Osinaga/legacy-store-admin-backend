@@ -5,7 +5,7 @@ const PRIVATE_KEY = config.private_key_jwt;
 
 export default function verifyToken (req, res, next) {
     const {access_token} = req.cookies;
-    console.log("access_token", access_token);
+    console.log("access_token desde midleware verifyToken", access_token);
 
     if(!access_token){
         return res.status(401).json({ status: "failed", data: "No hay token" })

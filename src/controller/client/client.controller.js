@@ -64,7 +64,7 @@ const getClientById = async (req, res) => {
 
 // devolver nombre de la persona y subdomain
 const verifySubdomain = async (req, res) => {
-    console.log("req.body.subdomain", req.body.subdomain);
+    console.log("req.body.subdomain", req.body);
     try {
         const client = await clientService.getClientBySubdomain(req.body.subdomain)
         res.status(200).json({ status: "okkk", data: client })

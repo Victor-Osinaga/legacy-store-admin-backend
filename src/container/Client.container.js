@@ -4,8 +4,8 @@ mongoose.set('strictQuery', false);
 export default class ClientMongo {
     constructor(collection, schema, url) {
         mongoose.connect(url, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true,
+            // useUnifiedTopology: true,
+            // useNewUrlParser: true,
         });
         this.collection = mongoose.model(collection, schema)
     }

@@ -35,6 +35,9 @@ class ClientService {
             const clientByProyectName = await this.clientRepository.repoGetClientByProyectName(newClientDto.getProyectName())
             if (clientByProyectName != null) throw { msg: "Nombre del proyecto ya registrado", status: 400 }
 
+            const clientBySubdomain = await this.clientRepository.repoGetClientBySubdomain(newClientDto.getSubdomain())
+            if (clientBySubdomain != null) throw { msg: "Subdominio ya registrado", status: 400 }
+
             newClientDto.setPassword(await bcryptjs.hash(newClientDto.getPassword(), 8))
 
             const registeredClient = await this.clientRepository.repoCreateClient(newClientDto.convertToDTO())
@@ -83,7 +86,7 @@ class ClientService {
 
     async getClientBySubdomain(subdomain) {
         try {
-            console.log("subdomain", subdomain);
+            console.log("subdomain desde getClientBySubdomain", subdomain);
             const clientBySubdomain = await this.clientRepository.repoGetClientBySubdomain(subdomain)
             if (!clientBySubdomain) {
                 throw { msg: "No existe un cliente con ese subdominio", status: 400 }
@@ -91,7 +94,8 @@ class ClientService {
             return {
                 proyectName: clientBySubdomain.proyectName,
                 name: clientBySubdomain.name,
-                lastname: clientBySubdomain.lastname
+                lastname: clientBySubdomain.lastname,
+                subdomain: clientBySubdomain.subdomain
             }
         } catch (error) {
             console.log("desde getClientBySubdomain service", error);
