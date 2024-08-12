@@ -2,15 +2,15 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 const config = {
+  // PUERTO ______________________________________________________________
   PORT: process.env.PORT,
+  // DATABASES ______________________________________________________________
   dev_url_database: process.env.DEV_URL_DATABASE,
   prod_url_database: process.env.PROD_URL_DATABASE,
-
-  // ______________________________________________________________
-  // URL FRONT STORE
+  // URL FRONT LEGACY STORE ______________________________________________________________
   front_url_store_dev: process.env.FRONT_URL_STORE_DEV,
   front_url_store_prod: process.env.FRONT_URL_STORE_PROD,
-  // URL FRONT PANEL
+  // URL FRONT/BACK LEGACY PANEL
   front_url_panel_dev: process.env.FRONT_URL_PANEL_DEV,
   front_url_panel_prod: process.env.FRONT_URL_PANEL_PROD,
   back_url_panel_dev: process.env.BACK_URL_PANEL_DEV,
