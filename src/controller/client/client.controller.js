@@ -33,7 +33,7 @@ const loginClient = async (req, res) => {
         res.cookie('access_token', token, {
             secure: true,
             httpOnly: true,
-            sameSite: 'none'
+            sameSite: 'None'
         })
         res.status(200).json({ status: "ok", data: clientLoged })
     } catch (error) {
