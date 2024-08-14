@@ -25,6 +25,7 @@ const getClients = async (req, res) => {
     }
 }
 
+// LOGIN
 const loginClient = async (req, res) => {
     try {
         const clientLoged = await clientService.loginClient(req.body)
@@ -35,6 +36,7 @@ const loginClient = async (req, res) => {
             httpOnly: true,
             sameSite: 'None',
             domain: '.vercel.app'
+
         })
         res.status(200).json({ status: "ok", data: clientLoged })
     } catch (error) {
