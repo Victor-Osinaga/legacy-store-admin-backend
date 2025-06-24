@@ -1,96 +1,72 @@
-import express from 'express'
-import cors from 'cors'
-import { v1ClientRouter } from './src/router/client/client.router.js'
-import cookieParser from 'cookie-parser'
-import config from './config.js'
+import express from "express";
+import cors from "cors";
+import { v1ClientRouter } from "./src/router/client/client.router.js";
+import cookieParser from "cookie-parser";
+import config from "./config.js";
 
-const app = express()
+const app = express();
 
+// PARA DEFINIR URL BASE
+const allowedOrigins = [
+  "https://legacy-panel.vercel.app", // PANEL FRONT PROD
+  "http://localhost:5173", // PANEL FRONT DEV
+];
 
-// const allowedOriginPattern = /^http:\/\/([a-z0-9]+)\.localhost(:\d+)?$/; // RegExp para subdominios de localhost
-const allowedOriginPatternDev = /^https?:\/\/([a-z0-9]+)\.localhost(:\d+)?$/; // Patrón para subdominios de localhost
-const allowedOriginPatternProd = /^https?:\/\/([a-z0-9-]+)\.legacy-panel\.vercel\.app$/;
-let allowedOrigins;
-if (config.env == 'dev') {
-    // AGREGAR allowedOriginPattern segun el modo para cambiar el regex
-    console.log("MODO DEV");
-    // Origen explícito
-    allowedOrigins = [
-        config.front_url_panel_dev,
-        config.front_url_store_dev,
-        config.back_url_panel_dev,
-    ]
-    console.log("allowedOrigins modo dev", allowedOrigins);
+// PARA DEFINIR SI ES UN SUBDOMINIO
+let allowedOriginPatternFrontStore;
+if (config.env == "dev") {
+  allowedOriginPatternFrontStore =
+    /^https?:\/\/([a-z0-9-]+)-legacystore\.localhost(:\d+)?$/;
 } else {
-    console.log("MODO PROD");
-    
-    // Origen explícito
-    allowedOrigins = [
-        config.front_url_panel_prod,
-        config.front_url_store_prod,
-        config.back_url_panel_prod,
-    ]
-    console.log("allowedOrigins modo prod", allowedOrigins);
-    
+  allowedOriginPatternFrontStore =
+    /^https?:\/\/([a-z0-9-]+)-legacystore\.vercel\.app$/;
 }
-app.use(cors(
-    {
-        origin: function (origin, callback) {
-            console.log("origin: ", origin);
-            
-            // Permitir solicitudes sin origen, como desde POSTMAN o cURL
-            if (!origin) return callback(null, true);
 
-            // Extraer el subdominio usando la expresión regular
-            const matchdev = origin.match(allowedOriginPatternDev);
-
-            if (matchdev) {
-                const subdomain = matchdev[1]; // 'viktor' en 'http://viktor.localhost:5173'
-                console.log("Subdominio detectado matchdev:", subdomain);
-
-                // Aquí puedes implementar lógica adicional basada en el subdominio, si es necesario
-
-                return callback(null, true);
-            }
-
-            // Extraer el subdominio usando la expresión regular
-            const matchprod = origin.match(allowedOriginPatternProd);
-
-            if (matchprod) {
-                const subdomain = matchprod[1]; // 'viktor' en 'http://viktor.localhost:5173'
-                console.log("Subdominio detectado matchprod:", subdomain);
-
-                // Aquí puedes implementar lógica adicional basada en el subdominio, si es necesario
-
-                return callback(null, true);
-            }
-
-            // Si el origen coincide con la lista de orígenes permitidos explícitos
-            if (allowedOrigins.includes(origin)) {
-                return callback(null, true);
-            } else {
-                return callback(new Error('No permitido por CORS'));
-            }
-        },
-        credentials: true,      // Permitir cookies y otros credenciales
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) {
+      console.log("CORS: Solicitud sin origen (permitida)");
+      return callback(null, true);
     }
-))
 
-app.use(express.static('public'))
-app.use(express.json())
-app.use(cookieParser())
-app.use(express.urlencoded({ extended: true }))
+    // 🔹 Normalizar el origin (eliminar barra final si existe)
+    const normalizedOrigin = origin.replace(/\/$/, "");
+    console.log("origen normalizado: ", normalizedOrigin);
+
+    // Validar contra allowedOrigins
+    if (allowedOrigins.includes(normalizedOrigin)) {
+      // console.log(`CORS: Dominio permitido -> ${origin}`);
+      return callback(null, true);
+    }
+
+    // Validar contra el patrón dinámico para subdominios
+    if (allowedOriginPatternFrontStore.test(normalizedOrigin)) {
+      // console.log(`CORS: Subdominio permitido -> ${origin}`);
+      return callback(null, true);
+    }
+
+    // Bloquear otros orígenes
+    console.error(`CORS: Origen bloqueado -> ${normalizedOrigin}`);
+    return callback(new Error("No permitido por CORS"));
+  },
+  credentials: true, // Habilita el envío de credenciales
+};
+
+// Aplica CORS a todas las rutas
+app.use(cors(corsOptions));
+app.use(express.static("public"));
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 // ROUTES
-app.use('/api-admin/clients', v1ClientRouter)
+app.use("/api-admin/clients", v1ClientRouter);
 
-app.all('*', (req, res) => {
-    res.json({
-        error: '404 NotFoud',
-        desc: 'No se encontro la pagina que buscas legacy store'
-    })
-})
+app.all("*", (req, res) => {
+  res.json({
+    error: "404 NotFoud",
+    desc: "No se encontro la pagina que buscas legacy store admin",
+  });
+});
 
-export {
-    app
-}
+export { app };
