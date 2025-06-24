@@ -14,8 +14,8 @@ const config = {
   prod_url_database: process.env.PROD_URL_DATABASE,
 
   // PANEL FRONTEND - SOLO EL PANEL FRONT SE COMUNICA CON ESTE PARA CONSEGUIR EL TOKEN
-  front_url_panel_dev: process.env.FRONT_URL_PANEL_DEV,
-  front_url_panel_prod: process.env.FRONT_URL_PANEL_PROD,
+  // front_url_panel_dev: process.env.FRONT_URL_PANEL_DEV,
+  // front_url_panel_prod: process.env.FRONT_URL_PANEL_PROD,
 
   // JWT
   private_key_jwt: process.env.PRIVATE_KEY_JWT,
